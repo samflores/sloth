@@ -14,7 +14,9 @@ NAtom::NAtom(const std::string& str) {
 }
 
 Node *NAtom::eval() {
+#ifdef __DEBUG
   std::cout << "a=> " << toString() << std::endl;
+#endif
   if (_name == "+")
     return new NFunction(this, core_plus);
   return this;
@@ -29,7 +31,14 @@ NFunction::NFunction(NAtom *atom, Node * (*body)(NList *) ){
   _body = body;
 }
 
+std::string NFunction::toString() {
+  return "f" + name();
+}
+
 Node *NFunction::apply(NList *list) {
+#ifdef __DEBUG
+  std::cout << "foo" << std::endl;
+#endif
   return _body(list);
 }
 
@@ -49,13 +58,13 @@ NList::NList(Node *car, Node *cdr) {
 }
 
 Node *NList::eval() {
+#ifdef __DEBUG
   std::cout << "l=> " << toString() << std::endl;
+#endif
   Node *car = _car->eval();
   Node *cdr = _cdr == NULL ? NULL : _cdr->eval();
-  if (car->isFunction() == 1) {
-    // std::cout << "f!" << std::endl;
-    // return ((NFunction*)car)->apply((NList*)cdr);
-    return new Node();
+  if (car != NULL && car->isFunction() == 1) {
+    return ((NFunction*)car)->apply((NList*)cdr);
   }
   return new NList( car, cdr );
 }
@@ -71,7 +80,9 @@ std::string NList::toString() {
 }
 
 Node *NNumber::eval() {
+#ifdef __DEBUG
   std::cout << "n=> " << toString() << std::endl;
+#endif
   return this;
 }
 

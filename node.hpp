@@ -26,7 +26,7 @@ class Node {
     virtual Node *eval() {};
     virtual std::string toString() {};
     virtual std::string className() {};
-    int isFunction() { return 0; }
+    virtual int isFunction() { return 0; }
 };
 
 class NList : public Node {
@@ -60,6 +60,7 @@ class NFunction : public Node {
   public:
     NFunction(NAtom *atom, Node * (*body)(NList *) );
     Node *apply(NList *);
+    std::string toString();
     std::string name() { return _atom->name(); }
     int isFunction() { return 1; }
 };
