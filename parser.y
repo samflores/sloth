@@ -1,8 +1,9 @@
 %{
 #include "node.hpp"
+Node *mainNode;
 
 extern int yylex();
-void yyerror(const char *s) { printf("ERROR: %s\n", s); }
+void yyerror(const char *s) {}
 %}
 
 %union {
@@ -17,7 +18,7 @@ void yyerror(const char *s) { printf("ERROR: %s\n", s); }
 %token <string> TATOM TINTEGER TDOUBLE TBINARY THEXADECIMAL TOCTAL
 %token <token>  TLPAREN TRPAREN TLBRACE TRBRACE TDOT
 
-%type <node>   sexpr
+%type <node>   sexpr atom
 %type <list>   list members
 %type <number> number
 
@@ -25,14 +26,18 @@ void yyerror(const char *s) { printf("ERROR: %s\n", s); }
 
 %%
 
-program : members;
+program : sexpr                    { mainNode = $1; }
+        ;
 
-sexpr   : TATOM                    { $$ = new NAtom(*$1); }
-        | number
+sexpr   : atom
         | list
         ;
 
-list    : TLPAREN members TRPAREN  { $$ = $2 }
+atom    : TATOM                    { $$ = new NAtom(*$1); }
+        | number
+        ;
+
+list    : TLPAREN members TRPAREN  { $$ = $2; }
         | TLPAREN TRPAREN          { $$ = new NList(); }
         ;
 

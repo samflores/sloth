@@ -1,68 +1,118 @@
 #include "node.hpp"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+Node *core_plus(NList *list) {
+  NNumber *a = (NNumber *)list->car();
+  NNumber *b = (NNumber *)((NList *)list->cdr())->car();
+  return a->plus(b);
+}
 
 NAtom::NAtom(const std::string& str) {
   _name = str;
-  std::cout << _name << std::endl;
+}
+
+Node *NAtom::eval() {
+  std::cout << "a=> " << toString() << std::endl;
+  if (_name == "+")
+    return new NFunction(this, core_plus);
+  return this;
 }
 
 std::string NAtom::toString() {
   return _name;
 }
 
+NFunction::NFunction(NAtom *atom, Node * (*body)(NList *) ){
+  _atom = atom;
+  _body = body;
+}
+
+Node *NFunction::apply(NList *list) {
+  return _body(list);
+}
+
 NList::NList() {
   _car = NULL;
   _cdr = NULL;
-  std::cout << toString() << std::endl;
 }
 
 NList::NList(Node *car) {
   _car = car;
-  _cdr = new NList();
-  std::cout << toString() << std::endl;
+  _cdr = NULL;
 }
 
 NList::NList(Node *car, Node *cdr) {
   _car = car;
   _cdr = cdr;
-  std::cout << toString() << std::endl;
+}
+
+Node *NList::eval() {
+  std::cout << "l=> " << toString() << std::endl;
+  Node *car = _car->eval();
+  Node *cdr = _cdr == NULL ? NULL : _cdr->eval();
+  if (car->isFunction() == 1) {
+    // std::cout << "f!" << std::endl;
+    // return ((NFunction*)car)->apply((NList*)cdr);
+    return new Node();
+  }
+  return new NList( car, cdr );
 }
 
 std::string NList::toString() {
-  std::string str = className();
-  str.append("(");
+  std::string str = "(";
   if (_car != NULL)
     str.append(_car->toString());
   str.append(" ");
-  if (_cdr != NULL)
-    str.append(_cdr->toString());
+  str.append(_cdr == NULL ? "#" : _cdr->toString());
   str.append(")");
   return str;
 }
 
+Node *NNumber::eval() {
+  std::cout << "n=> " << toString() << std::endl;
+  return this;
+}
+
 NInteger::NInteger() {
   _value = 0;
-  std::cout << toString() << std::endl;
 }
 
 NInteger::NInteger(const char *str) {
   _value = atol(str);
-  std::cout << toString() << std::endl;
+}
+
+NInteger::NInteger(long l) {
+  _value = l;
+}
+
+NNumber *NInteger::plus(NNumber *other) {
+  long _ovalue = ((NInteger*)other)->_value;
+  return new NInteger(_value + _ovalue);
 }
 
 std::string NInteger::toString() {
   char buffer[20];
   sprintf(buffer, "%ld", _value);
-  return className().append(*new std::string(buffer, strlen(buffer)));
+  return *new std::string(buffer, strlen(buffer));
 }
 
 NDouble::NDouble() {
   _value = 0;
-  // printf("%f\n", _value);
 }
 
 NDouble::NDouble(const char *str) {
   _value = atof(str);
-  // printf("%f\n", _value);
+}
+
+NDouble::NDouble(double d) {
+  _value = d;
+}
+
+NNumber *NDouble::plus(NNumber *other) {
+  double _ovalue = ((NDouble*)other)->_value;
+  return new NDouble(_value + _ovalue);
 }
 
 std::string NDouble::toString() {

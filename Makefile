@@ -1,6 +1,11 @@
 CXX := g++
-CXXFLAGS := `llvm-config --cxxflags`
-OBJECTS := tokens.o parser.o node.o main.o
+CXXFLAGS := `llvm-config --libs core jit native --cxxflags --ldflags` -g
+OBJECTS := parser.o tokens.o node.o main.o
+
+all: parser
+
+clean:
+	rm parser.cpp parser.hpp parser tokens.cpp *.o
 
 parser: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $@
