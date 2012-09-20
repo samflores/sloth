@@ -16,8 +16,16 @@ class NFunction;
 class Context;
 
 class Context {
+  private:
+    std::map<std::string, NAtom *> _atoms;
+    std::map<NAtom *, Node *> _values;
+  protected:
+    NFunction *defineCoreFunction(std::string name, Node *(*body)(NList *));
+    NFunction *defineFunction(NAtom *atom, Node *(*body)(NList *));
   public:
-    std::map<NAtom *, Node *> values;
+    Context();
+    NAtom *getAtom(std::string name);
+    Node *getValue(NAtom *atom);
 };
 
 class Node {
@@ -30,8 +38,9 @@ class Node {
 };
 
 class NList : public Node {
-  Node *_car;
-  Node *_cdr;
+  private:
+    Node *_car;
+    Node *_cdr;
   public:
     NList();
     NList(Node * car);
@@ -45,7 +54,8 @@ class NList : public Node {
 };
 
 class NAtom : public Node {
-  std::string _name;
+  private:
+    std::string _name;
   public:
     NAtom(const std::string& str);
     std::string toString();
@@ -55,10 +65,11 @@ class NAtom : public Node {
 };
 
 class NFunction : public Node {
-  NAtom *_atom;
-  Node *(*_body)(NList *);
+  private:
+    NAtom *_atom;
+    Node *(*_body)(NList *);
   public:
-    NFunction(NAtom *atom, Node * (*body)(NList *) );
+    NFunction(Node * (*body)(NList *) );
     Node *apply(NList *);
     std::string toString();
     std::string name() { return _atom->name(); }
@@ -73,7 +84,8 @@ class NNumber : public Node {
 };
 
 class NInteger : public NNumber {
-  long _value;
+  private:
+    long _value;
   public:
     NInteger();
     NInteger(const char *str);
@@ -85,7 +97,8 @@ class NInteger : public NNumber {
 };
 
 class NDouble : public NNumber {
-  double _value;
+  private:
+    double _value;
   public:
     NDouble();
     NDouble(double d);

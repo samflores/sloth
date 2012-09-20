@@ -1,6 +1,7 @@
 %{
 #include "node.hpp"
 Node *mainNode;
+Context *context = new Context();
 
 extern int yylex();
 void yyerror(const char *s) {}
@@ -33,7 +34,7 @@ sexpr   : atom
         | list
         ;
 
-atom    : TATOM                    { $$ = new NAtom(*$1); }
+atom    : TATOM                    { $$ = context->getAtom(*$1); }
         | number
         ;
 

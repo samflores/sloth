@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern Context *context;
+
 Node *core_plus(NList *list) {
   NNumber *a = (NNumber *)list->car();
   NNumber *b = (NNumber *)((NList *)list->cdr())->car();
@@ -15,15 +17,47 @@ Node *core_minus(NList *list) {
   return a->minus(b);
 }
 
+Context::Context() {
+  defineCoreFunction("+", core_plus);
+  defineCoreFunction("-", core_minus);
+}
+
+NAtom *Context::getAtom(std::string name) {
+  NAtom *atom = _atoms[name];
+  if (atom == NULL) {
+    atom = new NAtom(name);
+    _atoms[name] = atom;
+  }
+  return atom;
+}
+
+NFunction *Context::defineCoreFunction(std::string name, Node *(*body)(NList *)) {
+  return defineFunction(getAtom(name), body);
+}
+
+NFunction *Context::defineFunction(NAtom *atom, Node *(*body)(NList *)) {
+  NFunction *function = (NFunction *)_values[atom];
+  if (function != NULL) {
+    return NULL;
+  } else {
+    function = new NFunction(body);
+    _values[atom] = function;
+    return function;
+  }
+}
+
+Node *Context::getValue(NAtom *atom) {
+  return _values[atom];
+}
+
 NAtom::NAtom(const std::string& str) {
   _name = str;
 }
 
 Node *NAtom::eval() {
-  if (_name == "+")
-    return new NFunction(this, core_plus);
-  if (_name == "-")
-    return new NFunction(this, core_minus);
+  Node *value = context->getValue(this);
+  if (value != NULL)
+    return value;
   return this;
 }
 
@@ -31,8 +65,7 @@ std::string NAtom::toString() {
   return _name;
 }
 
-NFunction::NFunction(NAtom *atom, Node * (*body)(NList *) ){
-  _atom = atom;
+NFunction::NFunction(Node * (*body)(NList *) ){
   _body = body;
 }
 
