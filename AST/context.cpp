@@ -34,11 +34,10 @@ NFunction *Context::defineFunction(NAtom *atom, Node *(*body)(NList *)) {
   NFunction *function = (NFunction *)_values[atom];
   if (function != NULL) {
     return NULL;
-  } else {
-    function = new NFunction(body);
-    _values[atom] = function;
-    return function;
   }
+  function = new NFunction(body);
+  _values[atom] = function;
+  return function;
 }
 
 Node *Context::getValue(NAtom *atom) {
