@@ -1,5 +1,5 @@
 %{
-#include "node.hpp"
+#include "AST/node.hpp"
 Node *mainNode;
 Context *context = new Context();
 

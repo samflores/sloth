@@ -1,5 +1,5 @@
 #include <iostream>
-#include "node.hpp"
+#include "AST/node.hpp"
 
 extern int yyparse();
 extern Node *mainNode;

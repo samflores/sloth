@@ -1,7 +1,9 @@
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <map>
 
-class CodeGenContext;
 class Node;
 class NAtom;
 
@@ -80,7 +82,7 @@ class NNumber : public Node {
   public:
     virtual NNumber *plus(NNumber *other) {};
     virtual NNumber *minus(NNumber *other) {};
-    Node *eval();
+    Node *eval() { return this; }
 };
 
 class NInteger : public NNumber {

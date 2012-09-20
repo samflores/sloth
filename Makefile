@@ -1,6 +1,6 @@
 CXX := g++
-CXXFLAGS := `llvm-config --cxxflags` -g
-OBJECTS := parser.o tokens.o node.o main.o
+CXXFLAGS := -g
+OBJECTS := parser.o tokens.o main.o AST/function.o AST/node.o AST/context.o AST/integer.o AST/double.o AST/atom.o AST/list.o
 
 all: parser
 
@@ -11,6 +11,9 @@ parser: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $@
 
 %.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+AST/%.o: AST/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 tokens.cpp: tokens.l
