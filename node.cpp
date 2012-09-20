@@ -9,16 +9,21 @@ Node *core_plus(NList *list) {
   return a->plus(b);
 }
 
+Node *core_minus(NList *list) {
+  NNumber *a = (NNumber *)list->car();
+  NNumber *b = (NNumber *)((NList *)list->cdr())->car();
+  return a->minus(b);
+}
+
 NAtom::NAtom(const std::string& str) {
   _name = str;
 }
 
 Node *NAtom::eval() {
-#ifdef __DEBUG
-  std::cout << "a=> " << toString() << std::endl;
-#endif
   if (_name == "+")
     return new NFunction(this, core_plus);
+  if (_name == "-")
+    return new NFunction(this, core_minus);
   return this;
 }
 
@@ -36,9 +41,6 @@ std::string NFunction::toString() {
 }
 
 Node *NFunction::apply(NList *list) {
-#ifdef __DEBUG
-  std::cout << "foo" << std::endl;
-#endif
   return _body(list);
 }
 
@@ -58,9 +60,6 @@ NList::NList(Node *car, Node *cdr) {
 }
 
 Node *NList::eval() {
-#ifdef __DEBUG
-  std::cout << "l=> " << toString() << std::endl;
-#endif
   Node *car = _car->eval();
   Node *cdr = _cdr == NULL ? NULL : _cdr->eval();
   if (car != NULL && car->isFunction() == 1) {
@@ -80,9 +79,6 @@ std::string NList::toString() {
 }
 
 Node *NNumber::eval() {
-#ifdef __DEBUG
-  std::cout << "n=> " << toString() << std::endl;
-#endif
   return this;
 }
 
@@ -101,6 +97,11 @@ NInteger::NInteger(long l) {
 NNumber *NInteger::plus(NNumber *other) {
   long _ovalue = ((NInteger*)other)->_value;
   return new NInteger(_value + _ovalue);
+}
+
+NNumber *NInteger::minus(NNumber *other) {
+  long _ovalue = ((NInteger*)other)->_value;
+  return new NInteger(_value - _ovalue);
 }
 
 std::string NInteger::toString() {
@@ -124,6 +125,11 @@ NDouble::NDouble(double d) {
 NNumber *NDouble::plus(NNumber *other) {
   double _ovalue = ((NDouble*)other)->_value;
   return new NDouble(_value + _ovalue);
+}
+
+NNumber *NDouble::minus(NNumber *other) {
+  double _ovalue = ((NDouble*)other)->_value;
+  return new NDouble(_value - _ovalue);
 }
 
 std::string NDouble::toString() {

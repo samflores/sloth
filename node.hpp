@@ -65,10 +65,10 @@ class NFunction : public Node {
     int isFunction() { return 1; }
 };
 
-
 class NNumber : public Node {
   public:
     virtual NNumber *plus(NNumber *other) {};
+    virtual NNumber *minus(NNumber *other) {};
     Node *eval();
 };
 
@@ -81,16 +81,18 @@ class NInteger : public NNumber {
     std::string toString();
     std::string className() { return "i"; }
     NNumber *plus(NNumber *other);
+    NNumber *minus(NNumber *other);
 };
 
 class NDouble : public NNumber {
   double _value;
   public:
-  NDouble();
-  NDouble(double d);
-  NDouble(const char *str);
-  std::string toString();
-  NNumber *plus(NNumber *other);
+    NDouble();
+    NDouble(double d);
+    NDouble(const char *str);
+    std::string toString();
+    NNumber *plus(NNumber *other);
+    NNumber *minus(NNumber *other);
 };
 
 class NOctal : public NInteger {
