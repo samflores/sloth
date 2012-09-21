@@ -19,15 +19,18 @@ void yyerror(const char *s) {}
 %token <string> TIDENTIFIER TINTEGER TDOUBLE TBINARY THEXADECIMAL TOCTAL
 %token <token>  TLPAREN TRPAREN TLBRACE TRBRACE TDOT
 
-%type <node>   sexpr atom
-%type <list>   list members
-%type <number> number
+%type  <node>   sexpr atom number
+%type  <list>   slist list members
 
 %start program
 
 %%
 
-program : sexpr                    { mainNode = $1; }
+program : slist                    { mainNode = $1; }
+        ;
+
+slist   : sexpr                    { $$ = new NList($1); }
+        | sexpr slist              { $$ = new NList($1, $2); }
         ;
 
 sexpr   : atom
