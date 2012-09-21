@@ -43,6 +43,7 @@ list    : TLPAREN members TRPAREN  { $$ = $2; }
         ;
 
 members : sexpr                    { $$ = new NList($1); }
+        | sexpr TDOT sexpr         { $$ = new NList($1, $3); }
         | sexpr members            { $$ = new NList($1, $2); }
         ;
 
