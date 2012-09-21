@@ -17,7 +17,7 @@ Context::Context() {
   defineCoreFunction("-", core_minus);
 }
 
-NAtom *Context::getAtom(std::string name) {
+NAtom *Context::getAtom(std::string& name) {
   NAtom *atom = _atoms[name];
   if (atom == NULL) {
     atom = new NAtom(name);

@@ -26,7 +26,7 @@ class Context {
     NFunction *defineFunction(NAtom *atom, Node *(*body)(NList *));
   public:
     Context();
-    NAtom *getAtom(std::string name);
+    NAtom *getAtom(std::string& name);
     Node *getValue(NAtom *atom);
 };
 

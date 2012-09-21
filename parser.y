@@ -16,7 +16,7 @@ void yyerror(const char *s) {}
   int token;
 }
 
-%token <string> TATOM TINTEGER TDOUBLE TBINARY THEXADECIMAL TOCTAL
+%token <string> TIDENTIFIER TINTEGER TDOUBLE TBINARY THEXADECIMAL TOCTAL
 %token <token>  TLPAREN TRPAREN TLBRACE TRBRACE TDOT
 
 %type <node>   sexpr atom
@@ -34,7 +34,7 @@ sexpr   : atom
         | list
         ;
 
-atom    : TATOM                    { $$ = context->getAtom(*$1); }
+atom    : TIDENTIFIER              { $$ = context->getAtom(*$1); }
         | number
         ;
 

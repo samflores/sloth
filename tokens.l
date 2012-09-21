@@ -15,11 +15,11 @@ extern "C" int yywrap() {}
 0b[01,]+                        SAVE_TOKEN; return TBINARY;
 0x[0-9a-fA-F,]+                 SAVE_TOKEN; return THEXADECIMAL;
 0o[0-7,]+                       SAVE_TOKEN; return TOCTAL;
-[a-zA-Z][a-z+-.\/*%?!|$@]+      SAVE_TOKEN; return TATOM;
+[a-z+-.\/*%?!|$@]+              SAVE_TOKEN; return TIDENTIFIER;
 "("                             return TOKEN(TLPAREN);
 ")"                             return TOKEN(TRPAREN);
 "{"                             return TOKEN(TLBRACE);
 "}"                             return TOKEN(TRBRACE);
-"."                             return TOKEN(TDOT);
+\b.\b                           return TOKEN(TDOT);
 
 %%
