@@ -5,7 +5,7 @@ OBJECTS := parser.o tokens.o main.o AST/function.o AST/node.o AST/context.o AST/
 all: parser
 
 clean:
-	rm parser.cpp parser.hpp parser tokens.cpp *.o
+	rm parser.cpp parser.hpp parser tokens.cpp *.o AST/*.o
 
 parser: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $@
