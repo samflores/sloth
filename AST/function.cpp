@@ -5,7 +5,7 @@ NFunction::NFunction(Node * (*body)(NList *) ){
 }
 
 std::string NFunction::toString() {
-  return "f" + name();
+  return "f";
 }
 
 Node *NFunction::apply(NList *list) {

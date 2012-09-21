@@ -68,13 +68,11 @@ class NAtom : public Node {
 
 class NFunction : public Node {
   private:
-    NAtom *_atom;
     Node *(*_body)(NList *);
   public:
     NFunction(Node * (*body)(NList *) );
     Node *apply(NList *);
     std::string toString();
-    std::string name() { return _atom->name(); }
     int isFunction() { return 1; }
 };
 
