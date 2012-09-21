@@ -32,11 +32,10 @@ NFunction *Context::defineCoreFunction(std::string name, Node *(*body)(NList *))
 
 NFunction *Context::defineFunction(NAtom *atom, Node *(*body)(NList *)) {
   NFunction *function = (NFunction *)_values[atom];
-  if (function != NULL) {
-    return NULL;
+  if (function == NULL) {
+    function = new NFunction(body);
+    _values[atom] = function;
   }
-  function = new NFunction(body);
-  _values[atom] = function;
   return function;
 }
 
