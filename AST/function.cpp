@@ -1,6 +1,14 @@
 #include "node.hpp"
 
-NFunction::NFunction(Node * (*body)(NList *) ){
+extern Context *context;
+
+NFunction::NFunction(Context *context, Node * (*body)(NList *, Context *) ){
+  _context = context;
+  _body = body;
+}
+
+NFunction::NFunction(Node * (*body)(NList *, Context *) ) {
+  _context = context;
   _body = body;
 }
 
@@ -9,6 +17,6 @@ std::string NFunction::toString() {
 }
 
 Node *NFunction::apply(NList *list) {
-  return _body(list);
+  return _body(list, _context);
 }
 

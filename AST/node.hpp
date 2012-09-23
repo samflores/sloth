@@ -21,13 +21,14 @@ class Context {
   private:
     std::map<std::string, NAtom *> _atoms;
     std::map<NAtom *, Node *> _values;
-  protected:
-    NFunction *defineCoreFunction(std::string name, Node *(*body)(NList *));
-    NFunction *defineFunction(NAtom *atom, Node *(*body)(NList *));
   public:
     Context();
     NAtom *getAtom(std::string& name);
     Node *getValue(NAtom *atom);
+    void defineValue(NAtom *atom, Node *value);
+  protected:
+    NFunction *defineCoreFunction(std::string name, Node *(*body)(NList *, Context *));
+    NFunction *defineFunction(NAtom *atom, Node *(*body)(NList *, Context *));
 };
 
 class Node {
@@ -68,11 +69,15 @@ class NAtom : public Node {
 
 class NFunction : public Node {
   private:
-    Node *(*_body)(NList *);
+    NAtom *_atom;
+    Context *_context;
+    Node *(*_body)(NList *, Context *);
   public:
-    NFunction(Node * (*body)(NList *) );
+    NFunction(Node * (*body)(NList *, Context *) );
+    NFunction(Context *, Node * (*body)(NList *, Context *) );
     Node *apply(NList *);
     std::string toString();
+    std::string name() { return _atom->name(); }
     int isFunction() { return 1; }
 };
 
