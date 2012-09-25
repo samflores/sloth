@@ -1,6 +1,6 @@
 CXX := g++
 CXXFLAGS := -g
-OBJECTS := parser.o tokens.o main.o AST/function.o AST/node.o AST/context.o AST/integer.o AST/double.o AST/atom.o AST/list.o
+OBJECTS := parser.o tokens.o main.o AST/function.o AST/context.o AST/integer.o AST/double.o AST/atom.o AST/list.o
 
 all: parser
 
