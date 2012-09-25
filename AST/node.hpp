@@ -89,7 +89,7 @@ class NNumber : public Node {
 };
 
 class NInteger : public NNumber {
-  private:
+  protected:
     long _value;
   public:
     NInteger();
