@@ -1,6 +1,6 @@
 #include "node.hpp"
 
-extern Context *context;
+extern NContext *context;
 
 NAtom::NAtom(const std::string& str) {
   _name = str;

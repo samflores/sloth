@@ -62,6 +62,16 @@ NNumber *NInteger::minus(NNumber *other) {
   return new NInteger(_value - _ovalue);
 }
 
+NNumber *NInteger::times(NNumber *other) {
+  long _ovalue = ((NInteger*)other)->_value;
+  return new NInteger(_value * _ovalue);
+}
+
+NNumber *NInteger::divide(NNumber *other) {
+  long _ovalue = ((NInteger*)other)->_value;
+  return new NInteger(_value / _ovalue);
+}
+
 std::string NInteger::toString() {
   char buffer[20];
   sprintf(buffer, "%ld", _value);

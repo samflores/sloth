@@ -1,13 +1,13 @@
 #include "node.hpp"
 
-extern Context *context;
+extern NContext *context;
 
-NFunction::NFunction(Context *context, Node * (*body)(NList *, Context *) ){
+NFunction::NFunction(NContext *context, Node * (*body)(NList *, NContext *) ){
   _context = context;
   _body = body;
 }
 
-NFunction::NFunction(Node * (*body)(NList *, Context *) ) {
+NFunction::NFunction(Node * (*body)(NList *, NContext *) ) {
   _context = context;
   _body = body;
 }

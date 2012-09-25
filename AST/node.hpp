@@ -6,30 +6,16 @@
 
 class Node;
 class NAtom;
-
+class NChar;
+class NString;
 class NInteger;
 class NDouble;
 class NBinary;
 class NOctal;
 class NHexadecimal;
-
 class NList;
 class NFunction;
-class Context;
-
-class Context {
-  private:
-    std::map<std::string, NAtom *> _atoms;
-    std::map<NAtom *, Node *> _values;
-  public:
-    Context();
-    NAtom *getAtom(std::string& name);
-    Node *getValue(NAtom *atom);
-    void defineValue(NAtom *atom, Node *value);
-  protected:
-    NFunction *defineCoreFunction(std::string name, Node *(*body)(NList *, Context *));
-    NFunction *defineFunction(NAtom *atom, Node *(*body)(NList *, Context *));
-};
+class NContext;
 
 class Node {
   public:
@@ -37,7 +23,23 @@ class Node {
     virtual Node *eval() {};
     virtual std::string toString() {};
     virtual std::string className() {};
-    virtual int isFunction() { return 0; }
+};
+
+class NContext : public Node {
+  private:
+    NContext *_parent;
+    std::map<std::string, NAtom *> _atoms;
+    std::map<NAtom *, Node *> _values;
+  public:
+    NContext(Node *node=NULL, NContext *parent=NULL);
+    NAtom *getAtom(std::string& name);
+    NAtom *getOrCreateAtom(std::string& name);
+    Node *getValue(NAtom *atom);
+    Node *defineValue(NAtom *atom, Node *value);
+    std::string className() { return "x"; }
+  protected:
+    NFunction *defineCoreFunction(std::string name, Node *(*body)(NList *, NContext *));
+    NFunction *defineFunction(NAtom *atom, Node *(*body)(NList *, NContext *));
 };
 
 class NList : public Node {
@@ -53,7 +55,6 @@ class NList : public Node {
     std::string toString();
     std::string className() { return "l"; }
     Node *eval();
-    Node *eval(Node *node);
 };
 
 class NAtom : public Node {
@@ -69,23 +70,45 @@ class NAtom : public Node {
 
 class NFunction : public Node {
   private:
-    NAtom *_atom;
-    Context *_context;
-    Node *(*_body)(NList *, Context *);
+    NContext *_context;
+    Node *(*_body)(NList *, NContext *);
   public:
-    NFunction(Node * (*body)(NList *, Context *) );
-    NFunction(Context *, Node * (*body)(NList *, Context *) );
+    NFunction(Node * (*body)(NList *, NContext *) );
+    NFunction(NContext *, Node * (*body)(NList *, NContext *) );
     Node *apply(NList *);
     std::string toString();
-    std::string name() { return _atom->name(); }
-    int isFunction() { return 1; }
+    std::string className() { return "f"; }
 };
 
 class NNumber : public Node {
   public:
     virtual NNumber *plus(NNumber *other) {};
     virtual NNumber *minus(NNumber *other) {};
+    virtual NNumber *times(NNumber *other) {};
+    virtual NNumber *divide(NNumber *other) {};
     Node *eval() { return this; }
+};
+
+class NChar : public Node {
+  private:
+    char _value;
+  public:
+    NChar(char ch);
+    std::string toString();
+    std::string className() { return "c"; }
+    Node *eval();
+};
+
+class NString : public NList {
+  private:
+    std::string toString(NList *list);
+  public:
+    NString() : NList() {};
+    NString(Node * car) : NList(car) {};
+    NString(Node * car, Node * cdr) : NList(car, cdr) {};
+    std::string toString();
+    std::string className() { return "s"; }
+    Node *eval();
 };
 
 class NInteger : public NNumber {
@@ -99,6 +122,8 @@ class NInteger : public NNumber {
     std::string className() { return "i"; }
     NNumber *plus(NNumber *other);
     NNumber *minus(NNumber *other);
+    NNumber *times(NNumber *other);
+    NNumber *divide(NNumber *other);
 };
 
 class NDouble : public NNumber {
@@ -109,8 +134,11 @@ class NDouble : public NNumber {
     NDouble(double d);
     NDouble(const char *str);
     std::string toString();
+    std::string className() { return "d"; }
     NNumber *plus(NNumber *other);
     NNumber *minus(NNumber *other);
+    NNumber *times(NNumber *other);
+    NNumber *divide(NNumber *other);
 };
 
 class NOctal : public NInteger {

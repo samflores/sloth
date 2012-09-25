@@ -1,32 +1,54 @@
 #include "node.hpp"
 
-Node *core_plus(NList *list, Context *context) {
+Node *core_plus(NList *list, NContext *context) {
   NNumber *a = (NNumber *)list->car();
   NNumber *b = (NNumber *)((NList *)list->cdr())->car();
   return a->plus(b);
 }
 
-Node *core_minus(NList *list, Context *context) {
+Node *core_minus(NList *list, NContext *context) {
   NNumber *a = (NNumber *)list->car();
   NNumber *b = (NNumber *)((NList *)list->cdr())->car();
   return a->minus(b);
 }
 
-Node *core_define(NList *list, Context *context) {
+Node *core_times(NList *list, NContext *context) {
+  NNumber *a = (NNumber *)list->car();
+  NNumber *b = (NNumber *)((NList *)list->cdr())->car();
+  return a->times(b);
+}
+
+Node *core_divide(NList *list, NContext *context) {
+  NNumber *a = (NNumber *)list->car();
+  NNumber *b = (NNumber *)((NList *)list->cdr())->car();
+  return a->divide(b);
+}
+
+Node *core_define(NList *list, NContext *context) {
   NAtom *atom = (NAtom *)list->car();
   Node *value = ((NList *)list->cdr())->car();
   context->defineValue(atom, value);
   return value;
 }
 
-Context::Context() {
+NContext::NContext(Node *node, NContext *parent) {
+  _parent = parent;
   defineCoreFunction("+", core_plus);
   defineCoreFunction("-", core_minus);
+  defineCoreFunction("*", core_times);
+  defineCoreFunction("/", core_divide);
   defineCoreFunction("def", core_define);
 }
 
-NAtom *Context::getAtom(std::string& name) {
+NAtom *NContext::getAtom(std::string& name) {
   NAtom *atom = _atoms[name];
+  if (atom == NULL && _parent != NULL)
+    atom = _parent->getAtom(name);
+  return atom;
+}
+
+NAtom *NContext::getOrCreateAtom(std::string& name) {
+  NAtom *atom = getAtom(name);
   if (atom == NULL) {
     atom = new NAtom(name);
     _atoms[name] = atom;
@@ -34,11 +56,11 @@ NAtom *Context::getAtom(std::string& name) {
   return atom;
 }
 
-NFunction *Context::defineCoreFunction(std::string name, Node *(*body)(NList *, Context *)) {
-  return defineFunction(getAtom(name), body);
+NFunction *NContext::defineCoreFunction(std::string name, Node *(*body)(NList *, NContext *)) {
+  return defineFunction(getOrCreateAtom(name), body);
 }
 
-NFunction *Context::defineFunction(NAtom *atom, Node *(*body)(NList *, Context *)) {
+NFunction *NContext::defineFunction(NAtom *atom, Node *(*body)(NList *, NContext *)) {
   NFunction *function = (NFunction *)_values[atom];
   if (function == NULL) {
     function = new NFunction(this, body);
@@ -47,10 +69,11 @@ NFunction *Context::defineFunction(NAtom *atom, Node *(*body)(NList *, Context *
   return function;
 }
 
-Node *Context::getValue(NAtom *atom) {
+Node *NContext::getValue(NAtom *atom) {
   return _values[atom];
 }
 
-void Context::defineValue(NAtom *atom, Node *value) {
+Node *NContext::defineValue(NAtom *atom, Node *value) {
   _values[atom] = value;
+  return value;
 }

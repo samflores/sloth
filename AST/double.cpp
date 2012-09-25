@@ -22,6 +22,16 @@ NNumber *NDouble::minus(NNumber *other) {
   return new NDouble(_value - _ovalue);
 }
 
+NNumber *NDouble::times(NNumber *other) {
+  double _ovalue = ((NDouble*)other)->_value;
+  return new NDouble(_value * _ovalue);
+}
+
+NNumber *NDouble::divide(NNumber *other) {
+  double _ovalue = ((NDouble*)other)->_value;
+  return new NDouble(_value / _ovalue);
+}
+
 std::string NDouble::toString() {
   char buffer[20];
   sprintf(buffer, "%f", _value);

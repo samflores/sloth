@@ -18,7 +18,7 @@ NList::NList(Node *car, Node *cdr) {
 Node *NList::eval() {
   Node *car = _car == NULL ? NULL : _car->eval();
   Node *cdr = _cdr == NULL ? NULL : _cdr->eval();
-  if (car != NULL && car->isFunction() == 1) {
+  if (car != NULL && car->className() == "f") {
     return ((NFunction*)car)->apply((NList*)cdr);
   }
   return new NList( car, cdr );

@@ -22,5 +22,8 @@ extern "C" int yywrap() {}
 ")"                             return TOKEN(TRPAREN);
 "{"                             return TOKEN(TLBRACE);
 "}"                             return TOKEN(TRBRACE);
+"\\"                            return TOKEN(TBACKSLASH);
+"\""                            return TOKEN(TQUOTE);
+.                               SAVE_TOKEN; return TCHAR;
 
 %%
