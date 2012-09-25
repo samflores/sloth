@@ -10,6 +10,7 @@ extern "C" int yywrap() {}
 %%
 
 [ \t\n]                         ;
+;.*$                            ;
 "."                             return TOKEN(TDOT);
 [+-]?[0-9,]*\.[0-9,]+           SAVE_TOKEN; return TDOUBLE;
 [+-]?[0-9,]+                    SAVE_TOKEN; return TINTEGER;
