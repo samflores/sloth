@@ -13,21 +13,29 @@ NDouble::NDouble(double d) {
 }
 
 NNumber *NDouble::plus(NNumber *other) {
+  if (other->className() == "i")
+    other = ((NInteger*)other)->toDouble();
   double _ovalue = ((NDouble*)other)->_value;
   return new NDouble(_value + _ovalue);
 }
 
 NNumber *NDouble::minus(NNumber *other) {
+  if (other->className() == "i")
+    other = ((NInteger*)other)->toDouble();
   double _ovalue = ((NDouble*)other)->_value;
   return new NDouble(_value - _ovalue);
 }
 
 NNumber *NDouble::times(NNumber *other) {
+  if (other->className() == "i")
+    other = ((NInteger*)other)->toDouble();
   double _ovalue = ((NDouble*)other)->_value;
   return new NDouble(_value * _ovalue);
 }
 
 NNumber *NDouble::divide(NNumber *other) {
+  if (other->className() == "i")
+    other = ((NInteger*)other)->toDouble();
   double _ovalue = ((NDouble*)other)->_value;
   return new NDouble(_value / _ovalue);
 }

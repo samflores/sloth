@@ -1,7 +1,6 @@
 %{
 #include "AST/node.hpp"
-Node *mainNode;
-NContext *context = new NContext();
+NContext *context;
 
 extern int yylex();
 void yyerror(const char *s) {}
@@ -19,28 +18,28 @@ void yyerror(const char *s) {}
 %token <string> TIDENTIFIER TINTEGER TDOUBLE TBINARY THEXADECIMAL TOCTAL TSTRING TCHAR
 %token <token>  TLPAREN TRPAREN TLBRACE TRBRACE TDOT TQUOTE TBACKSLASH
 
-%type  <node>   sexpr atom number achar charl
-%type  <list>   slist list members schars stringl
+%type  <node>   slist sexpr atom number achar charl
+%type  <list>    list members schars stringl
 
 %start program
 
 %%
 
-program : slist                    { mainNode = $1; }
+program : slist                    { context->setRootNode($1); }
         ;
 
 slist   : sexpr                    { $$ = new NList($1); }
         | sexpr slist              { $$ = new NList($1, $2); }
         ;
 
-sexpr   : atom
-        | list
+sexpr   : atom                     { $$ = $1; }
+        | list                     { $$ = $1; }
         ;
 
 atom    : TIDENTIFIER              { $$ = context->getOrCreateAtom(*$1); }
-        | stringl
-        | charl
-        | number
+        | stringl                  { $$ = $1; }
+        | charl                    { $$ = $1; }
+        | number                   { $$ = $1; }
         ;
 
 stringl : TQUOTE schars TQUOTE     { $$ = $2; }

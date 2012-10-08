@@ -53,23 +53,39 @@ NBinary::NBinary(const char *str) {
 }
 
 NNumber *NInteger::plus(NNumber *other) {
-  long _ovalue = ((NInteger*)other)->_value;
-  return new NInteger(_value + _ovalue);
+  if (other->className() == "i") {
+    long _ovalue = ((NInteger*)other)->_value;
+    return new NInteger(_value + _ovalue);
+  } else {
+    return other->plus(toDouble());
+  }
 }
 
 NNumber *NInteger::minus(NNumber *other) {
-  long _ovalue = ((NInteger*)other)->_value;
-  return new NInteger(_value - _ovalue);
+  if (other->className() == "i") {
+    long _ovalue = ((NInteger*)other)->_value;
+    return new NInteger(_value - _ovalue);
+  } else {
+    return toDouble()->minus(other);
+  }
 }
 
 NNumber *NInteger::times(NNumber *other) {
-  long _ovalue = ((NInteger*)other)->_value;
-  return new NInteger(_value * _ovalue);
+  if (other->className() == "i") {
+    long _ovalue = ((NInteger*)other)->_value;
+    return new NInteger(_value * _ovalue);
+  } else {
+    return other->times(toDouble());
+  }
 }
 
 NNumber *NInteger::divide(NNumber *other) {
-  long _ovalue = ((NInteger*)other)->_value;
-  return new NInteger(_value / _ovalue);
+  if (other->className() == "i") {
+    long _ovalue = ((NInteger*)other)->_value;
+    return new NInteger(_value / _ovalue);
+  } else {
+    return toDouble()->divide(other);
+  }
 }
 
 std::string NInteger::toString() {

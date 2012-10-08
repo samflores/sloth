@@ -30,6 +30,7 @@ class NContext : public Node {
     NContext *_parent;
     std::map<std::string, NAtom *> _atoms;
     std::map<NAtom *, Node *> _values;
+    Node *_node;
   public:
     NContext(Node *node=NULL, NContext *parent=NULL);
     NAtom *getAtom(std::string& name);
@@ -37,6 +38,8 @@ class NContext : public Node {
     Node *getValue(NAtom *atom);
     Node *defineValue(NAtom *atom, Node *value);
     std::string className() { return "x"; }
+    Node *eval();
+    void *setRootNode(Node *node) { _node = node; }
   protected:
     NFunction *defineCoreFunction(std::string name, Node *(*body)(NList *, NContext *));
     NFunction *defineFunction(NAtom *atom, Node *(*body)(NList *, NContext *));
@@ -111,21 +114,6 @@ class NString : public NList {
     Node *eval();
 };
 
-class NInteger : public NNumber {
-  protected:
-    long _value;
-  public:
-    NInteger();
-    NInteger(const char *str);
-    NInteger(long l);
-    std::string toString();
-    std::string className() { return "i"; }
-    NNumber *plus(NNumber *other);
-    NNumber *minus(NNumber *other);
-    NNumber *times(NNumber *other);
-    NNumber *divide(NNumber *other);
-};
-
 class NDouble : public NNumber {
   private:
     double _value;
@@ -135,6 +123,22 @@ class NDouble : public NNumber {
     NDouble(const char *str);
     std::string toString();
     std::string className() { return "d"; }
+    NNumber *plus(NNumber *other);
+    NNumber *minus(NNumber *other);
+    NNumber *times(NNumber *other);
+    NNumber *divide(NNumber *other);
+};
+
+class NInteger : public NNumber {
+  protected:
+    long _value;
+  public:
+    NInteger();
+    NInteger(const char *str);
+    NInteger(long l);
+    std::string toString();
+    std::string className() { return "i"; }
+    NDouble *toDouble() { return new NDouble(double(_value)); }
     NNumber *plus(NNumber *other);
     NNumber *minus(NNumber *other);
     NNumber *times(NNumber *other);

@@ -2,11 +2,12 @@
 #include "AST/node.hpp"
 
 extern int yyparse();
-extern Node *mainNode;
+extern NContext *context;
 
 int main(int argc, const char *argv[])
 {
+  context = new NContext();
   yyparse();
-  std::cout << mainNode->eval()->toString() << std::endl;
+  context->eval();
   return 0;
 }

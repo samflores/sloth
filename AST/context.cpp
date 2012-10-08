@@ -31,13 +31,25 @@ Node *core_define(NList *list, NContext *context) {
   return value;
 }
 
+Node *core_print(NList *list, NContext *context) {
+  NAtom *value = (NAtom *)list->car();
+  std::cout << value->toString() << std::endl;
+  return NULL;
+}
+
 NContext::NContext(Node *node, NContext *parent) {
   _parent = parent;
+  _node = node;
   defineCoreFunction("+", core_plus);
   defineCoreFunction("-", core_minus);
   defineCoreFunction("*", core_times);
   defineCoreFunction("/", core_divide);
   defineCoreFunction("def", core_define);
+  defineCoreFunction("print", core_print);
+}
+
+Node *NContext::eval() {
+  return _node->eval();
 }
 
 NAtom *NContext::getAtom(std::string& name) {
