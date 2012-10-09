@@ -1,6 +1,9 @@
+*.a
 *.o
+lib
 parser
 parser.cpp
 parser.hpp
 tokens.cpp
 tokens.hpp
+spec/sloth_test
